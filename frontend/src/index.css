@@ -1,0 +1,334 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..800&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg-primary: #FAF6F0;
+  --bg-secondary: #EFE8DE;
+  --bg-card: #FFFDF9;
+  --bg-hover: #F5EFEB;
+  --color-burgundy: #8B2635;
+  --color-burgundy-hover: #731D2A;
+  --color-burgundy-dark: #5C121D;
+  --color-burgundy-light: #FCECEF;
+  --color-burgundy-border: #D89FA9;
+  --color-ink: #1A1817;
+  --color-ink-light: #3D3833;
+  --color-ink-muted: #6B635B;
+  --color-border: #1A1817;
+  --color-border-light: #D9D2C7;
+  --color-green: #1E6B45;
+  --color-green-light: #E7F4EC;
+  --color-green-border: #92CBAA;
+  --color-amber: #B86200;
+  --color-amber-light: #FEF3E2;
+  --color-blue: #1E4F7A;
+  --color-blue-light: #EBF3FA;
+  
+  --shadow-solid-sm: 2px 2px 0px #1A1817;
+  --shadow-solid: 3px 3px 0px #1A1817;
+  --shadow-solid-lg: 5px 5px 0px #1A1817;
+  --shadow-solid-burgundy: 3px 3px 0px #5C121D;
+  
+  --font-serif: 'Fraunces', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* Typography Helpers */
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+h1, h2, h3, h4, .editorial-heading {
+  font-family: var(--font-serif);
+  color: var(--color-ink);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Reference UI Retro-Modern Neo-Brutalist Buttons */
+.btn-burgundy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--color-burgundy);
+  color: #FFFFFF;
+  border: 2px solid var(--color-ink);
+  padding: 0.65rem 1.35rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-solid);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
+  text-decoration: none;
+}
+
+.btn-burgundy:hover:not(:disabled) {
+  background-color: var(--color-burgundy-hover);
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px var(--color-ink);
+}
+
+.btn-burgundy:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--color-ink);
+}
+
+.btn-burgundy:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--bg-card);
+  color: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  padding: 0.65rem 1.35rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-solid);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--bg-hover);
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px var(--color-ink);
+}
+
+.btn-secondary:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--color-ink);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-sm {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-solid-sm);
+}
+
+.btn-sm:hover:not(:disabled) {
+  box-shadow: 3px 3px 0px var(--color-ink);
+}
+
+/* Reference Retro Card Styles */
+.retro-card {
+  background-color: var(--bg-card);
+  border: 2px solid var(--color-ink);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-solid);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.retro-card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px var(--color-ink);
+}
+
+/* Step Badges matching Reference UI Screenshot 2 */
+.step-card {
+  background-color: var(--bg-card);
+  border: 2px solid var(--color-ink);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-solid);
+  padding: 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.step-num-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-burgundy);
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border: 1.5px solid var(--color-ink);
+  border-radius: 2px;
+  width: fit-content;
+}
+
+/* Status Chips */
+.chip-status-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--color-green-light);
+  color: var(--color-green);
+  border: 1.5px solid var(--color-green);
+  padding: 0.15rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.chip-status-burgundy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--color-burgundy-light);
+  color: var(--color-burgundy);
+  border: 1.5px solid var(--color-burgundy);
+  padding: 0.15rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.chip-status-amber {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--color-amber-light);
+  color: var(--color-amber);
+  border: 1.5px solid var(--color-amber);
+  padding: 0.15rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+/* Custom Checkbox */
+.custom-checkbox {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--color-ink);
+  border-radius: 3px;
+  background-color: #FFFFFF;
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  transition: background-color 0.1s ease;
+}
+
+.custom-checkbox:checked {
+  background-color: var(--color-burgundy);
+  border-color: var(--color-ink);
+}
+
+.custom-checkbox:checked::before {
+  content: "✔";
+  font-size: 0.85rem;
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+/* Segment Active / Highlight */
+.segment-card {
+  border: 1.5px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  background-color: #FFFFFF;
+  padding: 0.85rem;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.segment-card:hover {
+  border-color: var(--color-ink);
+  background-color: #FFFDF9;
+}
+
+.segment-card.active-playback {
+  border: 2px solid var(--color-burgundy);
+  background-color: #FDF4F6;
+  box-shadow: 2px 2px 0px var(--color-burgundy);
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-ink-muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink);
+}
+
+/* Waveform Canvas & Scrubber */
+.audio-scrubber {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: #D9D2C7;
+  border: 1.5px solid var(--color-ink);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+}
+
+.audio-scrubber::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--color-burgundy);
+  border: 2px solid var(--color-ink);
+  border-radius: 2px;
+  cursor: pointer;
+  box-shadow: 1px 1px 0px var(--color-ink);
+}
+
+/* Pulse animation */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s infinite ease-in-out;
+}
