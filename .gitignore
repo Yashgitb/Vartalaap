@@ -3,6 +3,7 @@
 .env.*
 .env.example
 
+
 # Backend runtime data and local databases
 backend/data/recordings/
 backend/data/*.db
