@@ -85,7 +85,7 @@ export default function ModelInspector({ health, onClose }) {
             <span className="chip-status-ok" style={{ fontSize: '0.7rem' }}>Official Groq</span>
           </div>
 
-          {/* Llama */}
+          {/* Qwen */}
           <div style={{
             backgroundColor: '#FFFFFF',
             border: '1.5px solid var(--color-ink)',

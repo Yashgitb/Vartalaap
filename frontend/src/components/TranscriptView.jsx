@@ -112,7 +112,7 @@ export default function TranscriptView({
             Transcript Segments
           </h3>
           <p style={{ fontSize: '0.78rem', color: 'var(--color-ink-muted)' }}>
-            {segments.length} Whisper segments • Click timestamps to jump audio
+            {segments.length > 0 ? `${segments.length} Whisper segments • ` : ''}Click timestamps to jump audio
           </p>
         </div>
 
@@ -214,7 +214,7 @@ export default function TranscriptView({
               fontWeight: 600
             }}
           >
-            <option value="ALL">All Speakers ({segments.length})</option>
+            <option value="ALL">All Speakers{segments.length > 0 ? ` (${segments.length})` : ''}</option>
             <option value="UNASSIGNED">Unassigned Only</option>
             {speakers.map(s => (
               <option key={s.id} value={s.id}>{s.name} ({s.role || 'Participant'})</option>

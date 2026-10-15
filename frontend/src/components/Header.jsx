@@ -1,7 +1,7 @@
 import React from 'react';
-import { Mic, Radio, ShieldCheck, Sparkles, Key, FileText, Info, History } from 'lucide-react';
+import { Mic, Radio, History, Home } from 'lucide-react';
 
-export default function Header({ health, onOpenHistory, onOpenUpload, onOpenAIInfo, activeRecording }) {
+export default function Header({ health, onOpenHistory, onOpenUpload, activeRecording, onGoHome }) {
   return (
     <header style={{
       borderBottom: '2px solid var(--color-ink)',
@@ -22,7 +22,11 @@ export default function Header({ health, onOpenHistory, onOpenUpload, onOpenAIIn
         gap: '1rem'
       }}>
         {/* Brand Logo & Title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+        <div
+          onClick={onGoHome}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', cursor: onGoHome ? 'pointer' : 'default' }}
+          title="Return to Home Page"
+        >
           <div style={{
             backgroundColor: 'var(--color-burgundy)',
             color: '#FFFFFF',
@@ -42,7 +46,6 @@ export default function Header({ health, onOpenHistory, onOpenUpload, onOpenAIIn
               <span className="font-serif" style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-ink)', letterSpacing: '-0.02em' }}>
                 Vartalaap
               </span>
-              
             </div>
             <p style={{ fontSize: '0.75rem', color: 'var(--color-ink-muted)', marginTop: '-2px' }}>
               Speech Transcription & Meeting Intelligence
@@ -50,39 +53,19 @@ export default function Header({ health, onOpenHistory, onOpenUpload, onOpenAIIn
           </div>
         </div>
 
-        {/* Center: External AI Provider Notice */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.6rem',
-          backgroundColor: 'var(--bg-primary)',
-          border: '1.5px solid var(--color-border-light)',
-          padding: '0.35rem 0.85rem',
-          borderRadius: '4px',
-          fontSize: '0.78rem'
-        }}>
-          
-          
-          <div style={{
-            width: '8px',
-            height: '8px',
-            borderRadius: '50%',
-            backgroundColor: health?.has_groq_api_key ? 'var(--color-green)' : 'var(--color-amber)',
-            border: '1px solid var(--color-ink)'
-          }} />
-        </div>
-
         {/* Right Actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-          <button
-            onClick={onOpenAIInfo}
-            className="btn-secondary btn-sm"
-            title="External AI Provider & Models Disclosure"
-            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-          >
-            <Info size={15} />
-            <span>AI Info</span>
-          </button>
+          {activeRecording && (
+            <button
+              onClick={onGoHome}
+              className="btn-secondary btn-sm"
+              title="Return to Home Page"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+            >
+              <Home size={15} />
+              <span>Home</span>
+            </button>
+          )}
 
           <button
             onClick={onOpenHistory}

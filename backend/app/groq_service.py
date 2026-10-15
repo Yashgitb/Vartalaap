@@ -358,20 +358,109 @@ Please generate the complete structured JSON analysis conforming to the schema."
         return structured_summary
     except ValidationError as e:
         logger.error("Pydantic validation failed on Groq summary data: %s", str(e))
-        # Attempt minimal repair if keys are slightly different
+        # Attempt comprehensive repair for LLMs that use alternate key names
         try:
+            # --- Resolve alternate key names for top-level fields ---
+            raw_tasks = (
+                data_dict.get("tasks")
+                or data_dict.get("action_items")
+                or data_dict.get("action_items_tasks")
+                or data_dict.get("actionItems")
+                or data_dict.get("items")
+                or []
+            )
+            raw_decisions = (
+                data_dict.get("decisions")
+                or data_dict.get("key_decisions")
+                or data_dict.get("keyDecisions")
+                or []
+            )
+            raw_goals = (
+                data_dict.get("goals")
+                or data_dict.get("objectives")
+                or data_dict.get("key_goals")
+                or []
+            )
+            raw_persons = (
+                data_dict.get("person_summaries")
+                or data_dict.get("participant_summaries")
+                or data_dict.get("speaker_summaries")
+                or data_dict.get("participants")
+                or []
+            )
+            raw_discussion = (
+                data_dict.get("key_discussion_points")
+                or data_dict.get("discussion_points")
+                or data_dict.get("key_points")
+                or data_dict.get("keyPoints")
+                or []
+            )
+
+            # --- Normalize tasks: map alternate field names ---
+            normalized_tasks = []
+            for idx, t in enumerate(raw_tasks):
+                if not isinstance(t, dict):
+                    continue
+                normalized_tasks.append({
+                    "id": t.get("id", t.get("task_id", f"task_{idx + 1}")),
+                    "action": t.get("action", t.get("task", t.get("description", t.get("title", "No description")))),
+                    "owner": t.get("owner", t.get("assignee", t.get("assigned_to", "Unassigned"))),
+                    "deadline": t.get("deadline", t.get("due_date", t.get("timeframe", "Not specified"))),
+                    "priority": t.get("priority", "medium"),
+                    "supporting_segment_ids": t.get("supporting_segment_ids", t.get("segment_ids", t.get("segments", []))),
+                    "completed": t.get("completed", False),
+                })
+
+            # --- Normalize decisions ---
+            normalized_decisions = []
+            for idx, d in enumerate(raw_decisions):
+                if not isinstance(d, dict):
+                    continue
+                normalized_decisions.append({
+                    "id": d.get("id", d.get("decision_id", f"dec_{idx + 1}")),
+                    "decision": d.get("decision", d.get("description", d.get("title", "No description"))),
+                    "rationale": d.get("rationale", d.get("reasoning", d.get("context", ""))),
+                    "supporting_segment_ids": d.get("supporting_segment_ids", d.get("segment_ids", d.get("segments", []))),
+                })
+
+            # --- Normalize goals ---
+            normalized_goals = []
+            for idx, g in enumerate(raw_goals):
+                if not isinstance(g, dict):
+                    continue
+                normalized_goals.append({
+                    "id": g.get("id", g.get("goal_id", f"goal_{idx + 1}")),
+                    "goal": g.get("goal", g.get("objective", g.get("description", g.get("title", "No description")))),
+                    "status": g.get("status", "planned"),
+                    "supporting_segment_ids": g.get("supporting_segment_ids", g.get("segment_ids", g.get("segments", []))),
+                })
+
+            # --- Normalize person summaries ---
+            normalized_persons = []
+            for p in raw_persons:
+                if not isinstance(p, dict):
+                    continue
+                normalized_persons.append({
+                    "speaker_name": p.get("speaker_name", p.get("name", p.get("participant", "Unknown Speaker"))),
+                    "role": p.get("role"),
+                    "summary": p.get("summary", p.get("contribution_summary", p.get("description", ""))),
+                    "key_contributions": p.get("key_contributions", p.get("contributions", p.get("key_points", []))),
+                    "supporting_segment_ids": p.get("supporting_segment_ids", p.get("segment_ids", p.get("segments", []))),
+                })
+
             repaired = {
-                "title": data_dict.get("title", "Conversation Summary"),
-                "overall_summary": data_dict.get("overall_summary", data_dict.get("summary", "Summary not available")),
-                "key_discussion_points": data_dict.get("key_discussion_points", []),
-                "person_summaries": data_dict.get("person_summaries", []),
-                "goals": data_dict.get("goals", []),
-                "tasks": data_dict.get("tasks", []),
-                "decisions": data_dict.get("decisions", []),
+                "title": data_dict.get("title", data_dict.get("meeting_title", "Conversation Summary")),
+                "overall_summary": data_dict.get("overall_summary", data_dict.get("summary", data_dict.get("executive_summary", "Summary not available"))),
+                "key_discussion_points": raw_discussion,
+                "person_summaries": normalized_persons,
+                "goals": normalized_goals,
+                "tasks": normalized_tasks,
+                "decisions": normalized_decisions,
                 "model_used": model,
                 "generated_at": time.strftime("%Y-%m-%d %H:%M:%S"),
                 "external_provider": "Groq Cloud AI"
             }
+            logger.info("Repaired summary data — tasks: %d, decisions: %d, goals: %d", len(normalized_tasks), len(normalized_decisions), len(normalized_goals))
             return StructuredSummaryData.model_validate(repaired)
         except Exception as retry_err:
             raise GroqServiceException(

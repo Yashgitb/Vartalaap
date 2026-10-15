@@ -203,7 +203,7 @@ export default function SpeakerManager({
         {/* Existing Speakers Roster */}
         <div>
           <h4 className="font-serif" style={{ fontSize: '0.95rem', color: 'var(--color-ink)', marginBottom: '0.5rem' }}>
-            Current Roster ({speakers.length})
+            Current Roster{speakers.length > 0 ? ` (${speakers.length})` : ''}
           </h4>
 
           {speakers.length === 0 ? (

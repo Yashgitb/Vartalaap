@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Mic, UploadCloud, History, Radio, ArrowRight, Play, AlertCircle, RefreshCw, FileText, CheckCircle2 } from 'lucide-react';
+import { Mic, UploadCloud, History, Radio, ArrowRight, Play, AlertCircle, RefreshCw, FileText, CheckCircle2, ArrowLeft, Home } from 'lucide-react';
 import { api } from './api/client';
 import Header from './components/Header';
 import HeroWorkflow from './components/HeroWorkflow';
@@ -10,7 +10,6 @@ import TranscriptView from './components/TranscriptView';
 import SummaryView from './components/SummaryView';
 import SpeakerManager from './components/SpeakerManager';
 import RecordingsList from './components/RecordingsList';
-import ModelInspector from './components/ModelInspector';
 import ErrorModal from './components/ErrorModal';
 
 export default function App() {
@@ -25,7 +24,6 @@ export default function App() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showSpeakerModal, setShowSpeakerModal] = useState(false);
-  const [showAIInfoModal, setShowAIInfoModal] = useState(false);
   const [currentError, setCurrentError] = useState(null);
 
   // Fetch health on mount
@@ -109,7 +107,7 @@ export default function App() {
         activeRecording={activeRecording}
         onOpenUpload={() => setShowUploadModal(true)}
         onOpenHistory={() => setShowHistoryModal(true)}
-        onOpenAIInfo={() => setShowAIInfoModal(true)}
+        onGoHome={() => setActiveRecording(null)}
       />
 
       {/* Main Content Area */}
@@ -183,18 +181,30 @@ export default function App() {
               marginBottom: '1.25rem',
               boxShadow: 'var(--shadow-solid)'
             }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <h2 className="font-serif" style={{ fontSize: '1.4rem', color: 'var(--color-ink)' }}>
-                    {activeRecording.original_filename}
-                  </h2>
-                  <span className={activeRecording.status === 'completed' ? 'chip-status-ok' : (activeRecording.status === 'error' ? 'chip-status-burgundy' : 'chip-status-amber')}>
-                    {activeRecording.status}
-                  </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                <button
+                  onClick={() => setActiveRecording(null)}
+                  className="btn-secondary btn-sm"
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.45rem 0.75rem', fontWeight: 700 }}
+                  title="Return to Home Page"
+                >
+                  <ArrowLeft size={15} />
+                  <span>Back to Home</span>
+                </button>
+
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <h2 className="font-serif" style={{ fontSize: '1.4rem', color: 'var(--color-ink)' }}>
+                      {activeRecording.original_filename}
+                    </h2>
+                    <span className={activeRecording.status === 'completed' ? 'chip-status-ok' : (activeRecording.status === 'error' ? 'chip-status-burgundy' : 'chip-status-amber')}>
+                      {activeRecording.status}
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--color-ink-muted)', marginTop: '2px' }}>
+                    Processed with Groq Whisper Large v3 Turbo • Backend Database ID: {activeRecording.id}
+                  </p>
                 </div>
-                <p style={{ fontSize: '0.78rem', color: 'var(--color-ink-muted)', marginTop: '2px' }}>
-                  Processed with Groq Whisper Large v3 Turbo & Llama 3.3 70B • Backend Database ID: {activeRecording.id}
-                </p>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
@@ -202,7 +212,7 @@ export default function App() {
                   onClick={() => setShowSpeakerModal(true)}
                   className="btn-secondary btn-sm"
                 >
-                  <span>Speakers ({activeRecording.speakers?.length || 0})</span>
+                  <span>Speakers{activeRecording.speakers?.length > 0 ? ` (${activeRecording.speakers.length})` : ''}</span>
                 </button>
 
                 <button
@@ -275,7 +285,7 @@ export default function App() {
             <strong style={{ color: 'var(--color-ink)' }}>Vartalaap v2.0</strong> — Groq-Powered Speech & Intelligence Engine
           </div>
           <div>
-            External AI processing handled strictly via Groq Cloud APIs (whisper-large-v3-turbo & llama-3.3-70b-versatile).
+            External AI processing handled strictly via Groq Cloud APIs.
           </div>
         </div>
       </footer>
@@ -370,12 +380,6 @@ export default function App() {
         />
       )}
 
-      {showAIInfoModal && (
-        <ModelInspector
-          health={health}
-          onClose={() => setShowAIInfoModal(false)}
-        />
-      )}
 
       {currentError && (
         <ErrorModal

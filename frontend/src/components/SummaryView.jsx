@@ -81,7 +81,7 @@ export default function SummaryView({
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
           <Sparkles size={20} style={{ color: 'var(--color-burgundy)' }} />
           <h3 className="font-serif" style={{ fontSize: '1.3rem', color: 'var(--color-ink)' }}>
-            Groq Llama 3.3 Structured Summarisation
+            Structured Meeting Summarisation
           </h3>
         </div>
 
@@ -142,7 +142,7 @@ export default function SummaryView({
           ) : (
             <>
               <Sparkles size={16} />
-              <span>{summaryStatus === 'failed' ? 'Retry Summarisation (Groq Llama 3.3)' : 'Generate Meeting Intelligence'}</span>
+              <span>{summaryStatus === 'failed' ? 'Retry Summarisation' : 'Generate Meeting Intelligence'}</span>
             </>
           )}
         </button>
@@ -156,18 +156,21 @@ export default function SummaryView({
   const personSummaries = summary.person_summaries || [];
   const keyPoints = summary.key_discussion_points || [];
 
+  // Filter out any section/tab that has 0 values so empty categories never show in the UI
+  const availableTabs = [
+    { id: 'overview', label: 'Executive Summary', count: null },
+    { id: 'tasks', label: 'Action Items', count: tasks.length },
+    { id: 'people', label: 'Person Perspectives', count: personSummaries.length },
+    { id: 'goals', label: 'Goals & Milestones', count: goals.length },
+    { id: 'decisions', label: 'Decisions', count: decisions.length },
+  ].filter(tab => tab.count === null || tab.count > 0);
+
+  const currentTab = availableTabs.some(t => t.id === activeTab) ? activeTab : (availableTabs[0]?.id || 'overview');
+
   return (
     <div className="retro-card" style={{ padding: '1.25rem', backgroundColor: 'var(--bg-card)' }}>
-      {/* Title & Metadata Header */}
+      {/* Title Header */}
       <div style={{ borderBottom: '1.5px solid var(--color-border-light)', paddingBottom: '0.85rem', marginBottom: '1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.35rem' }}>
-          <span className="chip-status-ok" style={{ fontSize: '0.72rem' }}>
-            Structured Groq Intelligence
-          </span>
-          <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--color-ink-muted)' }}>
-            Model: {summary.model_used || 'llama-3.3-70b-versatile'}
-          </span>
-        </div>
         <h2 className="font-serif" style={{ fontSize: '1.45rem', color: 'var(--color-ink)' }}>
           {summary.title || "Meeting Summary"}
         </h2>
@@ -182,13 +185,7 @@ export default function SummaryView({
         overflowX: 'auto',
         paddingBottom: '0px'
       }}>
-        {[
-          { id: 'overview', label: 'Executive Summary', count: null },
-          { id: 'tasks', label: 'Action Items', count: tasks.length },
-          { id: 'people', label: 'Person Perspectives', count: personSummaries.length },
-          { id: 'goals', label: 'Goals & Milestones', count: goals.length },
-          { id: 'decisions', label: 'Decisions', count: decisions.length },
-        ].map(tab => (
+        {availableTabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
@@ -197,24 +194,24 @@ export default function SummaryView({
               borderTop: '2px solid var(--color-ink)',
               borderLeft: '2px solid var(--color-ink)',
               borderRight: '2px solid var(--color-ink)',
-              borderBottom: activeTab === tab.id ? 'none' : '2px solid var(--color-ink)',
-              backgroundColor: activeTab === tab.id ? 'var(--bg-card)' : 'var(--bg-secondary)',
-              color: activeTab === tab.id ? 'var(--color-burgundy)' : 'var(--color-ink)',
-              fontWeight: activeTab === tab.id ? 800 : 600,
+              borderBottom: currentTab === tab.id ? 'none' : '2px solid var(--color-ink)',
+              backgroundColor: currentTab === tab.id ? 'var(--bg-card)' : 'var(--bg-secondary)',
+              color: currentTab === tab.id ? 'var(--color-burgundy)' : 'var(--color-ink)',
+              fontWeight: currentTab === tab.id ? 800 : 600,
               fontSize: '0.82rem',
               borderRadius: '4px 4px 0 0',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               gap: '0.35rem',
-              marginBottom: activeTab === tab.id ? '-2px' : '0px',
-              zIndex: activeTab === tab.id ? 2 : 1
+              marginBottom: currentTab === tab.id ? '-2px' : '0px',
+              zIndex: currentTab === tab.id ? 2 : 1
             }}
           >
             <span>{tab.label}</span>
-            {tab.count !== null && (
+            {tab.count !== null && tab.count > 0 && (
               <span style={{
-                backgroundColor: activeTab === tab.id ? 'var(--color-burgundy)' : 'var(--color-ink-muted)',
+                backgroundColor: currentTab === tab.id ? 'var(--color-burgundy)' : 'var(--color-ink-muted)',
                 color: '#FFFFFF',
                 fontSize: '0.7rem',
                 padding: '0.05rem 0.35rem',
@@ -228,7 +225,7 @@ export default function SummaryView({
       </div>
 
       {/* Tab 1: Executive Overview */}
-      {activeTab === 'overview' && (
+      {currentTab === 'overview' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           {/* Executive Summary Box */}
           <div style={{
@@ -294,7 +291,7 @@ export default function SummaryView({
       )}
 
       {/* Tab 2: Action Items & Tasks */}
-      {activeTab === 'tasks' && (
+      {currentTab === 'tasks' && (
         <div>
           {tasks.length === 0 ? (
             <p style={{ color: 'var(--color-ink-muted)', textAlign: 'center', padding: '1.5rem' }}>No explicit action items detected in this transcript.</p>
@@ -395,7 +392,7 @@ export default function SummaryView({
       )}
 
       {/* Tab 3: Person Perspectives */}
-      {activeTab === 'people' && (
+      {currentTab === 'people' && (
         <div>
           {personSummaries.length === 0 ? (
             <p style={{ color: 'var(--color-ink-muted)', textAlign: 'center', padding: '1.5rem' }}>No individual participant perspectives found.</p>
@@ -464,7 +461,7 @@ export default function SummaryView({
       )}
 
       {/* Tab 4: Goals & Milestones */}
-      {activeTab === 'goals' && (
+      {currentTab === 'goals' && (
         <div>
           {goals.length === 0 ? (
             <p style={{ color: 'var(--color-ink-muted)', textAlign: 'center', padding: '1.5rem' }}>No specific goals or targets extracted.</p>
@@ -498,7 +495,7 @@ export default function SummaryView({
       )}
 
       {/* Tab 5: Decisions */}
-      {activeTab === 'decisions' && (
+      {currentTab === 'decisions' && (
         <div>
           {decisions.length === 0 ? (
             <p style={{ color: 'var(--color-ink-muted)', textAlign: 'center', padding: '1.5rem' }}>No final decisions flagged in this discussion.</p>

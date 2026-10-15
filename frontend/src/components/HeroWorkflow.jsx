@@ -23,7 +23,7 @@ export default function HeroWorkflow({ onStartNew }) {
     },
     {
       num: '04',
-      title: 'Llama 3.3 Summarisation',
+      title: 'Structured Summarisation',
       desc: 'Structured Pydantic summary extracting goals, decisions and perspectives.',
       icon: <BrainCircuit size={16} />
     },
@@ -73,7 +73,7 @@ export default function HeroWorkflow({ onStartNew }) {
           maxWidth: '720px',
           margin: '0 auto 1.75rem auto'
         }}>
-          Vartalaap pairs Groq's high-throughput <strong style={{ color: 'var(--color-ink)' }}>Whisper Large v3 Turbo</strong> speech recognition with <strong style={{ color: 'var(--color-ink)' }}>Llama 3.3 70B</strong> structured intelligence for instant meeting transcripts, manual speaker attribution, and actionable summaries.
+          Vartalaap pairs Groq's high-throughput <strong style={{ color: 'var(--color-ink)' }}>Whisper Large v3 Turbo</strong> speech recognition with <strong style={{ color: 'var(--color-ink)' }}>LLM</strong> structured intelligence for instant meeting transcripts, manual speaker attribution, and actionable summaries.
         </p>
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>

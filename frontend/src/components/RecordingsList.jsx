@@ -85,7 +85,7 @@ export default function RecordingsList({
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <History size={20} style={{ color: 'var(--color-burgundy)' }} />
             <h3 className="font-serif" style={{ fontSize: '1.3rem', color: 'var(--color-ink)' }}>
-              Saved Conversations & Meetings ({recordings.length})
+              Saved Conversations & Meetings{recordings.length > 0 ? ` (${recordings.length})` : ''}
             </h3>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -161,14 +161,18 @@ export default function RecordingsList({
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.75rem', color: 'var(--color-ink-muted)', flexWrap: 'wrap' }}>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                        <Clock size={12} />
-                        <span>{formatSeconds(r.duration_seconds)}</span>
-                      </span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                        <HardDrive size={12} />
-                        <span>{formatBytes(r.file_size_bytes)}</span>
-                      </span>
+                      {r.duration_seconds > 0 && (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                          <Clock size={12} />
+                          <span>{formatSeconds(r.duration_seconds)}</span>
+                        </span>
+                      )}
+                      {r.file_size_bytes > 0 && (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                          <HardDrive size={12} />
+                          <span>{formatBytes(r.file_size_bytes)}</span>
+                        </span>
+                      )}
                       <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                         <Calendar size={12} />
                         <span>{formatDate(r.created_at)}</span>

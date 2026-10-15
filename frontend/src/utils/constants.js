@@ -1,12 +1,12 @@
 export const GROQ_CONFIG = {
   TRANSCRIPTION_MODEL: "whisper-large-v3-turbo",
-  SUMMARY_MODEL: "llama-3.3-70b-versatile",
-  FALLBACK_SUMMARY_MODEL: "llama-3.1-8b-instant",
+  SUMMARY_MODEL: "qwen/qwen3.8-27b",
+  FALLBACK_SUMMARY_MODEL: "qwen/qwen3.8-27b",
   MAX_FILE_SIZE_MB: 25,
   MAX_FILE_SIZE_BYTES: 25 * 1024 * 1024,
   ALLOWED_EXTENSIONS: ["mp3", "mp4", "mpeg", "mpga", "m4a", "wav", "webm", "ogg", "flac", "aac"],
   PROVIDER_NAME: "Groq Cloud AI",
-  PROVIDER_DISCLOSURE: "Uploaded audio and transcripts are processed externally by Groq Cloud AI Services (whisper-large-v3-turbo & llama-3.3-70b-versatile).",
+  PROVIDER_DISCLOSURE: "Uploaded audio and transcripts are processed externally by Groq Cloud AI Services.",
 };
 
 export const SPEAKER_COLORS = [

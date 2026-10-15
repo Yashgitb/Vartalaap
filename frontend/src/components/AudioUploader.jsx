@@ -189,7 +189,7 @@ export default function AudioUploader({ onUploadSuccess, onError }) {
             disabled={!autoTranscribe}
             onChange={(e) => setAutoSummarize(e.target.checked)}
           />
-          <span>Auto-summarise with <strong>Groq Llama 3.3 70B Versatile</strong> (Structured Pydantic)</span>
+          <span>Auto-summarise with <strong>Structured AI Summarisation</strong> (Pydantic Schema)</span>
         </label>
       </div>
 
