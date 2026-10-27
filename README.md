@@ -66,6 +66,5 @@ Vite dev server runs on `http://localhost:5173`.
 
 ---
 
-## External AI Processing Disclosure
 
-All audio files and transcripts are transmitted to and processed by **Groq Cloud AI Services**. Your `GROQ_API_KEY` is maintained strictly on the backend and is never exposed to the client.
+
