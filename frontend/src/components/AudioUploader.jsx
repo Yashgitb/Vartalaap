@@ -20,7 +20,7 @@ export default function AudioUploader({ onUploadSuccess, onError }) {
 
     // Check size
     if (file.size > GROQ_CONFIG.MAX_FILE_SIZE_BYTES) {
-      const err = `File size (${formatBytes(file.size)}) exceeds Groq's maximum limit of ${GROQ_CONFIG.MAX_FILE_SIZE_MB}MB. Please compress or upload a shorter clip.`;
+      const err = `File size (${formatBytes(file.size)}) exceeds maximum limit of ${GROQ_CONFIG.MAX_FILE_SIZE_MB}MB. Please compress or upload a shorter clip.`;
       setValidationError(err);
       if (onError) onError(err);
       return false;
@@ -67,7 +67,7 @@ export default function AudioUploader({ onUploadSuccess, onError }) {
       setSelectedFile(null);
     } catch (err) {
       console.error("Upload error:", err);
-      const errMsg = err.message || "Upload failed. Please check your Groq API connection.";
+      const errMsg = err.message || "Upload failed. Please check your network connection.";
       setValidationError(errMsg);
       if (onError) onError(errMsg, err.status);
     } finally {
@@ -83,7 +83,7 @@ export default function AudioUploader({ onUploadSuccess, onError }) {
           Upload Audio File
         </h3>
         <span className="chip-status-burgundy" style={{ fontSize: '0.72rem' }}>
-          Max {GROQ_CONFIG.MAX_FILE_SIZE_MB}MB (Groq Limit)
+          Max {GROQ_CONFIG.MAX_FILE_SIZE_MB}MB
         </span>
       </div>
 
@@ -178,7 +178,7 @@ export default function AudioUploader({ onUploadSuccess, onError }) {
             checked={autoTranscribe}
             onChange={(e) => setAutoTranscribe(e.target.checked)}
           />
-          <span>Auto-transcribe with <strong>Groq Whisper Large v3 Turbo</strong></span>
+          <span>Auto-transcribe speech recording</span>
         </label>
 
         <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontSize: '0.88rem' }}>
@@ -189,11 +189,11 @@ export default function AudioUploader({ onUploadSuccess, onError }) {
             disabled={!autoTranscribe}
             onChange={(e) => setAutoSummarize(e.target.checked)}
           />
-          <span>Auto-summarise with <strong>Structured AI Summarisation</strong> (Pydantic Schema)</span>
+          <span>Auto-generate meeting summary & insights</span>
         </label>
       </div>
 
-      {/* External AI Processing Disclaimer */}
+      {/* Privacy Disclaimer */}
       <div style={{
         fontSize: '0.75rem',
         color: 'var(--color-ink-muted)',
@@ -203,14 +203,14 @@ export default function AudioUploader({ onUploadSuccess, onError }) {
         gap: '0.4rem'
       }}>
         <Sparkles size={14} style={{ color: 'var(--color-burgundy)' }} />
-        <span>Audio and transcript are processed externally by Groq Cloud AI services.</span>
+        <span>Audio and transcripts are processed securely and privately.</span>
       </div>
 
       {/* Upload Progress Bar */}
       {uploading && (
         <div style={{ marginBottom: '1rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.25rem' }}>
-            <span>Processing with Groq Cloud...</span>
+            <span>Processing audio...</span>
             <span>{uploadProgress}%</span>
           </div>
           <div style={{
@@ -251,7 +251,7 @@ export default function AudioUploader({ onUploadSuccess, onError }) {
           disabled={!selectedFile || uploading}
           style={{ width: '100%', maxWidth: '240px' }}
         >
-          <span>{uploading ? 'Processing Groq AI...' : 'Upload & Transcribe'}</span>
+          <span>{uploading ? 'Processing...' : 'Upload & Transcribe'}</span>
           <ArrowUpRight size={16} />
         </button>
       </div>

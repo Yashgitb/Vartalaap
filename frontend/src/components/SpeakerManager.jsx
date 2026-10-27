@@ -99,7 +99,7 @@ export default function SpeakerManager({
         }}>
           <Shield size={16} style={{ color: 'var(--color-burgundy)', flexShrink: 0 }} />
           <span>
-            Groq Whisper produces raw transcripts without automated diarisation. Define human speakers here and assign segments manually to prevent identity hallucinations.
+            Define verified human speakers here and assign segments manually to ensure clear and accurate speaker attribution.
           </span>
         </div>
 

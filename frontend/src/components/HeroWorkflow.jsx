@@ -6,13 +6,13 @@ export default function HeroWorkflow({ onStartNew }) {
     {
       num: '01',
       title: 'Audio Ingestion',
-      desc: 'Record live or upload audio validated against Groq 25MB limit and formats.',
+      desc: 'Record live or upload audio files up to 25MB in standard audio formats.',
       icon: <UploadCloud size={16} />
     },
     {
       num: '02',
-      title: 'Whisper v3 Turbo',
-      desc: 'Fast speech-to-text with verbose_json segment timestamps and IDs.',
+      title: 'Speech Transcription',
+      desc: 'High-speed speech-to-text with precise segment timestamps and IDs.',
       icon: <Zap size={16} />
     },
     {
@@ -73,7 +73,7 @@ export default function HeroWorkflow({ onStartNew }) {
           maxWidth: '720px',
           margin: '0 auto 1.75rem auto'
         }}>
-          Vartalaap pairs Groq's high-throughput <strong style={{ color: 'var(--color-ink)' }}>Whisper Large v3 Turbo</strong> speech recognition with <strong style={{ color: 'var(--color-ink)' }}>LLM</strong> structured intelligence for instant meeting transcripts, manual speaker attribution, and actionable summaries.
+          Vartalaap delivers high-throughput speech recognition and structured intelligence for instant meeting transcripts, verified speaker attribution, actionable summaries, and an interactive meeting chatbot.
         </p>
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
@@ -92,7 +92,7 @@ export default function HeroWorkflow({ onStartNew }) {
       <div style={{ maxWidth: '1350px', margin: '0 auto', padding: '0 1rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
           <h2 className="font-serif" style={{ fontSize: '1.5rem', color: 'var(--color-ink)' }}>
-            Five-step Groq AI pipeline
+            Five-step meeting intelligence pipeline
           </h2>
           <p style={{ fontSize: '0.85rem', color: 'var(--color-ink-muted)' }}>
             Separating speech-to-text inference, manual speaker attribution, and structured summarisation

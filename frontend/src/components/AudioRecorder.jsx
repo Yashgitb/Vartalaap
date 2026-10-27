@@ -298,7 +298,7 @@ export default function AudioRecorder({ onRecordingComplete, onError }) {
               disabled={submitting}
             >
               <Send size={16} />
-              <span>{submitting ? 'Transcribing with Groq...' : 'Transcribe & Summarise'}</span>
+              <span>{submitting ? 'Transcribing...' : 'Transcribe & Summarise'}</span>
             </button>
           </>
         )}
@@ -315,7 +315,7 @@ export default function AudioRecorder({ onRecordingComplete, onError }) {
         gap: '0.4rem'
       }}>
         <Sparkles size={13} style={{ color: 'var(--color-burgundy)' }} />
-        <span>Audio sent directly to Groq Whisper v3 Turbo backend endpoint</span>
+        <span>Audio processed securely and privately</span>
       </div>
     </div>
   );

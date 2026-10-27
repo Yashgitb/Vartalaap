@@ -121,4 +121,29 @@ export const api = {
   },
 
   getExportUrl: (recordingId, format) => `${API_BASE}/api/recordings/${recordingId}/export/${format}`,
+
+  // RAG Chatbot
+  chatWithMeeting: async (recordingId, question, topK = null) => {
+    const payload = { question };
+    if (topK) payload.top_k = topK;
+    const res = await fetch(`${API_BASE}/api/recordings/${recordingId}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    return handleResponse(res);
+  },
+
+  getChatStatus: async (recordingId) => {
+    const res = await fetch(`${API_BASE}/api/recordings/${recordingId}/chat/status`);
+    return handleResponse(res);
+  },
+
+  indexTranscript: async (recordingId) => {
+    const res = await fetch(`${API_BASE}/api/recordings/${recordingId}/chat/index`, {
+      method: "POST",
+    });
+    return handleResponse(res);
+  },
 };
+

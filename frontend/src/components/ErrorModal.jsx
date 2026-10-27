@@ -12,17 +12,17 @@ export default function ErrorModal({ error, onClose, onRetry }) {
   let suggestion = "Please check your network and try again.";
 
   if (statusCode === 413 || errorMessage.toLowerCase().includes('25mb') || errorMessage.toLowerCase().includes('exceeds')) {
-    title = "File Size Exceeds Groq Limits (25MB)";
+    title = "File Size Exceeds Limit (25MB)";
     icon = <UploadCloud size={24} style={{ color: 'var(--color-burgundy)' }} />;
-    suggestion = "Groq's audio transcription endpoint supports audio files up to 25MB. Please upload a shorter audio recording or compress the file.";
+    suggestion = "Audio transcription supports audio files up to 25MB. Please upload a shorter audio recording or compress the file.";
   } else if (statusCode === 429 || errorMessage.toLowerCase().includes('rate limit')) {
-    title = "Groq API Rate Limit Reached";
+    title = "API Rate Limit Reached";
     icon = <Zap size={24} style={{ color: 'var(--color-amber)' }} />;
-    suggestion = "You have hit the Groq Cloud rate limit for your current tier. Please wait 10-30 seconds before retrying.";
+    suggestion = "You have hit the temporary rate limit. Please wait 10-30 seconds before retrying.";
   } else if (statusCode === 401 || errorMessage.toLowerCase().includes('api key') || errorMessage.toLowerCase().includes('authentication')) {
-    title = "Groq API Key Required";
+    title = "API Key Required";
     icon = <Key size={24} style={{ color: 'var(--color-burgundy)' }} />;
-    suggestion = "Please open the .env file in your Vartalaap backend directory and set your GROQ_API_KEY=gsk_... from console.groq.com.";
+    suggestion = "Please open the .env file in your project directory and set your API key.";
   }
 
   return (

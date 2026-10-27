@@ -64,6 +64,14 @@ def generate_summary(recording_id: str, payload: Optional[SummarizeRequest] = No
             status="completed"
         )
         update_recording_status(recording_id, status="completed")
+
+        # Automatically index transcript embeddings for instant RAG Chatbot readiness
+        try:
+            from ..rag_service import index_recording_transcript
+            index_recording_transcript(recording_id)
+        except Exception as idx_err:
+            logger.warning("Background indexing warning for %s: %s", recording_id, str(idx_err))
+
         return summary_obj
         
     except GroqServiceException as e:

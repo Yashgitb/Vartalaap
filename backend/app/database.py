@@ -76,6 +76,24 @@ def init_db():
         FOREIGN KEY (recording_id) REFERENCES recordings (id) ON DELETE CASCADE
     );
     """)
+
+    # 5. Meeting Embeddings Table (stores chunked transcript segments and vectors for RAG)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS meeting_embeddings (
+        id TEXT PRIMARY KEY,
+        recording_id TEXT NOT NULL,
+        chunk_index INTEGER NOT NULL,
+        start_time REAL NOT NULL,
+        end_time REAL NOT NULL,
+        speaker_names TEXT,
+        segment_ids TEXT NOT NULL,
+        chunk_text TEXT NOT NULL,
+        embedding TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (recording_id) REFERENCES recordings (id) ON DELETE CASCADE
+    );
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_embeddings_recording ON meeting_embeddings(recording_id);")
     
     conn.commit()
     conn.close()
@@ -153,6 +171,7 @@ def list_all_recordings() -> List[Dict[str, Any]]:
 def delete_recording_entry(recording_id: str) -> bool:
     conn = get_db_connection()
     cursor = conn.cursor()
+    cursor.execute("DELETE FROM meeting_embeddings WHERE recording_id = ?", (recording_id,))
     cursor.execute("DELETE FROM summaries WHERE recording_id = ?", (recording_id,))
     cursor.execute("DELETE FROM segments WHERE recording_id = ?", (recording_id,))
     cursor.execute("DELETE FROM speakers WHERE recording_id = ?", (recording_id,))
@@ -330,3 +349,96 @@ def get_summary_by_recording(recording_id: str) -> Optional[Dict[str, Any]]:
     except Exception:
         res["data"] = {}
     return res
+
+# --- Embeddings Helpers ---
+
+def save_embeddings_for_recording(recording_id: str, chunks: List[Dict[str, Any]]):
+    """Persist generated embeddings for a recording's transcript chunks."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    now = datetime.now().isoformat()
+    cursor.execute("DELETE FROM meeting_embeddings WHERE recording_id = ?", (recording_id,))
+    for idx, chunk in enumerate(chunks):
+        chunk_id = chunk.get("id") or f"emb_{recording_id}_{idx}"
+        cursor.execute(
+            """
+            INSERT INTO meeting_embeddings (
+                id, recording_id, chunk_index, start_time, end_time,
+                speaker_names, segment_ids, chunk_text, embedding, created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                chunk_id,
+                recording_id,
+                chunk.get("chunk_index", idx),
+                float(chunk.get("start_time", 0.0)),
+                float(chunk.get("end_time", 0.0)),
+                json.dumps(chunk.get("speaker_names", [])),
+                json.dumps(chunk.get("segment_ids", [])),
+                chunk.get("chunk_text", "").strip(),
+                json.dumps(chunk.get("embedding", [])),
+                now
+            )
+        )
+    conn.commit()
+    conn.close()
+    logger.info("Saved %d embedding chunks for recording %s", len(chunks), recording_id)
+
+def get_embeddings_for_recording(recording_id: str) -> List[Dict[str, Any]]:
+    """Retrieve all persisted embedding chunks for a recording."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT * FROM meeting_embeddings WHERE recording_id = ? ORDER BY chunk_index ASC",
+        (recording_id,)
+    )
+    rows = cursor.fetchall()
+    conn.close()
+    results = []
+    for r in rows:
+        try:
+            emb = json.loads(r["embedding"])
+        except Exception:
+            emb = []
+        try:
+            spk = json.loads(r["speaker_names"]) if r["speaker_names"] else []
+        except Exception:
+            spk = []
+        try:
+            seg_ids = json.loads(r["segment_ids"]) if r["segment_ids"] else []
+        except Exception:
+            seg_ids = []
+        results.append({
+            "id": r["id"],
+            "recording_id": r["recording_id"],
+            "chunk_index": r["chunk_index"],
+            "start_time": r["start_time"],
+            "end_time": r["end_time"],
+            "speaker_names": spk,
+            "segment_ids": seg_ids,
+            "chunk_text": r["chunk_text"],
+            "embedding": emb,
+            "created_at": r["created_at"]
+        })
+    return results
+
+def count_embeddings_for_recording(recording_id: str) -> int:
+    """Return count of stored embedding chunks for a recording."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM meeting_embeddings WHERE recording_id = ?", (recording_id,))
+    cnt = cursor.fetchone()[0]
+    conn.close()
+    return cnt
+
+def delete_embeddings_for_recording(recording_id: str) -> int:
+    """Delete all embeddings for a recording."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM meeting_embeddings WHERE recording_id = ?", (recording_id,))
+    deleted = cursor.rowcount
+    conn.commit()
+    conn.close()
+    return deleted
+

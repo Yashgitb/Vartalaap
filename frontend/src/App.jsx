@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Mic, UploadCloud, History, Radio, ArrowRight, Play, AlertCircle, RefreshCw, FileText, CheckCircle2, ArrowLeft, Home } from 'lucide-react';
+import { Mic, UploadCloud, History, Radio, ArrowRight, Play, AlertCircle, RefreshCw, FileText, CheckCircle2, ArrowLeft, Home, MessageSquare } from 'lucide-react';
 import { api } from './api/client';
 import Header from './components/Header';
 import HeroWorkflow from './components/HeroWorkflow';
@@ -8,6 +8,7 @@ import AudioRecorder from './components/AudioRecorder';
 import AudioPlayer from './components/AudioPlayer';
 import TranscriptView from './components/TranscriptView';
 import SummaryView from './components/SummaryView';
+import ChatWithMeeting from './components/ChatWithMeeting';
 import SpeakerManager from './components/SpeakerManager';
 import RecordingsList from './components/RecordingsList';
 import ErrorModal from './components/ErrorModal';
@@ -19,6 +20,7 @@ export default function App() {
   const [seekTime, setSeekTime] = useState(null);
   const [loadingRecording, setLoadingRecording] = useState(false);
   const [inputMode, setInputMode] = useState('upload'); // upload, record
+  const [rightPanelTab, setRightPanelTab] = useState('summary'); // summary, chat
 
   // Modals
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -202,7 +204,7 @@ export default function App() {
                     </span>
                   </div>
                   <p style={{ fontSize: '0.78rem', color: 'var(--color-ink-muted)', marginTop: '2px' }}>
-                    Processed with Groq Whisper Large v3 Turbo • Backend Database ID: {activeRecording.id}
+                    Meeting ID: {activeRecording.id}
                   </p>
                 </div>
               </div>
@@ -253,17 +255,78 @@ export default function App() {
                 />
               </div>
 
-              {/* Right: Summary View */}
+              {/* Right: Summary View / Chat with Meeting Toggle */}
               <div>
-                <SummaryView
-                  recordingId={activeRecording.id}
-                  summary={activeRecording.summary}
-                  summaryStatus={activeRecording.summary_status}
-                  summaryError={activeRecording.summary_error}
-                  segments={activeRecording.segments || []}
-                  onSeekSegment={handleSeek}
-                  onRegenerateSummary={handleRegenerateSummary}
-                />
+                {/* Tab switcher */}
+                <div style={{
+                  display: 'flex',
+                  gap: '0.4rem',
+                  marginBottom: '0.75rem',
+                  borderBottom: '2px solid var(--color-ink)',
+                  paddingBottom: '0px'
+                }}>
+                  <button
+                    onClick={() => setRightPanelTab('summary')}
+                    className={rightPanelTab === 'summary' ? 'btn-burgundy btn-sm' : 'btn-secondary btn-sm'}
+                    style={{
+                      borderRadius: '4px 4px 0 0',
+                      marginBottom: '-2px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      fontWeight: 700
+                    }}
+                  >
+                    <FileText size={14} />
+                    <span>Summary & Insights</span>
+                  </button>
+
+                  <button
+                    onClick={() => setRightPanelTab('chat')}
+                    className={rightPanelTab === 'chat' ? 'btn-burgundy btn-sm' : 'btn-secondary btn-sm'}
+                    style={{
+                      borderRadius: '4px 4px 0 0',
+                      marginBottom: '-2px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      fontWeight: 700
+                    }}
+                  >
+                    <MessageSquare size={14} />
+                    <span>Chat with Meeting</span>
+                    <span style={{
+                      fontSize: '0.62rem',
+                      padding: '1px 5px',
+                      borderRadius: '2px',
+                      backgroundColor: rightPanelTab === 'chat' ? '#FAF7F2' : 'var(--color-burgundy)',
+                      color: rightPanelTab === 'chat' ? 'var(--color-burgundy)' : '#FAF7F2',
+                      fontWeight: 700
+                    }}>
+                      RAG
+                    </span>
+                  </button>
+                </div>
+
+                {rightPanelTab === 'summary' ? (
+                  <SummaryView
+                    recordingId={activeRecording.id}
+                    summary={activeRecording.summary}
+                    summaryStatus={activeRecording.summary_status}
+                    summaryError={activeRecording.summary_error}
+                    segments={activeRecording.segments || []}
+                    onSeekSegment={handleSeek}
+                    onRegenerateSummary={handleRegenerateSummary}
+                    onOpenChat={() => setRightPanelTab('chat')}
+                  />
+                ) : (
+                  <ChatWithMeeting
+                    recordingId={activeRecording.id}
+                    recordingTitle={activeRecording.original_filename}
+                    onSeekSegment={handleSeek}
+                    onError={(err) => setCurrentError({ message: err })}
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -282,10 +345,10 @@ export default function App() {
       }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
           <div>
-            <strong style={{ color: 'var(--color-ink)' }}>Vartalaap v2.0</strong> — Groq-Powered Speech & Intelligence Engine
+            <strong style={{ color: 'var(--color-ink)' }}>Vartalaap</strong> — Speech Transcription & Meeting Intelligence
           </div>
           <div>
-            External AI processing handled strictly via Groq Cloud APIs.
+            Secure & Private Meeting Processing
           </div>
         </div>
       </footer>

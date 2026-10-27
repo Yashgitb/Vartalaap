@@ -115,6 +115,12 @@ async def upload_audio(
                         status="completed"
                     )
                     update_recording_status(rec_id, status="completed")
+                    # Auto-index transcript for RAG Chatbot
+                    try:
+                        from ..rag_service import index_recording_transcript
+                        index_recording_transcript(rec_id)
+                    except Exception as idx_err:
+                        logger.warning("Auto-index embeddings warning for %s: %s", rec_id, str(idx_err))
                 except GroqServiceException as sum_err:
                     # Crucial Requirement: Preserve successful transcripts if summaries fail!
                     logger.warning("Auto-summarise failed for %s, but transcript preserved: %s", rec_id, sum_err.message)

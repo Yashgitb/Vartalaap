@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from .config import settings
 from .database import init_db
 from .groq_service import GroqServiceException
-from .routers import health, recordings, transcripts, summaries, speakers
+from .routers import health, recordings, transcripts, summaries, speakers, rag
 
 logging.basicConfig(
     level=logging.INFO,
@@ -60,6 +60,7 @@ app.include_router(recordings.router)
 app.include_router(transcripts.router)
 app.include_router(summaries.router)
 app.include_router(speakers.router)
+app.include_router(rag.router)
 
 @app.get("/")
 def root():

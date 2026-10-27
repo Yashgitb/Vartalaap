@@ -12,6 +12,7 @@ Vartalaap is an executive-grade speech transcription and conversational intellig
 - **Manual Speaker Attribution**: Groq Whisper does not provide diarisation; Vartalaap keeps manual speaker creation and precise segment assignment to prevent hallucinated identities.
 - **Robust Failure Isolation**: Transcripts and segment timestamps are safely committed to SQLite even if summarisation encounters an error, allowing easy one-click retries.
 - **Strict Size & Format Validation**: Enforces Groq's 25MB upload limit and supported audio formats (`mp3`, `wav`, `m4a`, `webm`, `ogg`, `flac`, `aac`) before making remote calls.
+- **RAG-Based Meeting Chatbot**: Chat with your meeting transcripts using Retrieval-Augmented Generation. Strict transcript grounding guarantees zero hallucinations with clickable timestamp citations.
 - **Cream & Burgundy Reference UI**: Neo-brutalist editorial design system with sharp borders, solid offset drop shadows, serif typography, and status chips.
 
 ---
@@ -21,9 +22,11 @@ Vartalaap is an executive-grade speech transcription and conversational intellig
 - **Frontend**: React (Vite), Vanilla CSS (Custom Cream & Burgundy Design System), Lucide Icons
 - **Backend**: FastAPI, SQLite3, Official Python Groq SDK (`groq`), Pydantic v2
 - **Audio Processing**: Web Audio API, MediaRecorder API, HTML5 Audio with range streaming
+- **RAG & Embeddings**: Semantic chunking, persistent vector storage in SQLite, Cosine Similarity search, and strictly grounded LLM answering.
 - **AI Models**:
   - Transcription: `whisper-large-v3-turbo`
-  - Summarisation: `llama-3.3-70b-versatile` (or `llama-3.1-8b-instant`)
+  - Summarisation & RAG Chat: `llama-3.3-70b-versatile` (or `qwen/qwen3.8-27b`)
+  - Embeddings: Built-in local semantic vectorizer (or optional OpenAI-compatible embedding API)
 
 ---
 
@@ -37,13 +40,26 @@ Copy `.env.example` to `.env` in the project root:
 cp .env.example .env
 ```
 
-Edit `.env` and provide your Groq API key:
+Edit `.env` and provide your Groq API key (and optional embedding configurations):
 
 ```env
+# Groq API Configuration
 GROQ_API_KEY=gsk_your_actual_groq_api_key
 GROQ_TRANSCRIPTION_MODEL=whisper-large-v3-turbo
 GROQ_SUMMARY_MODEL=llama-3.3-70b-versatile
-MAX_FILE_SIZE_MB=25
+
+# RAG & Meeting Chatbot Configuration
+RAG_TOP_K=5
+RAG_SIMILARITY_THRESHOLD=0.05
+RAG_CHAT_MODEL=llama-3.3-70b-versatile
+
+# Embedding Configuration
+# Options: 'local' (built-in semantic vectorizer, zero-dependency) or 'openai' (remote OpenAI-compatible API)
+EMBEDDING_PROVIDER=local
+# Optional: only required if using EMBEDDING_PROVIDER=openai
+# EMBEDDING_API_KEY=sk-...
+# EMBEDDING_BASE_URL=https://api.openai.com/v1
+# EMBEDDING_MODEL=text-embedding-3-small
 ```
 
 ### 2. Run the Backend Server
@@ -63,6 +79,22 @@ npm run dev
 ```
 
 Vite dev server runs on `http://localhost:5173`.
+
+### 4. Run the Automated RAG Test Suite
+
+```bash
+cd backend
+python test_rag.py
+```
+
+Runs all 7 verification tests:
+1. Explicit transcript facts retrieval
+2. Multi-section synthesis
+3. Undiscussed topic exact fallback
+4. Completely unrelated questions fallback
+5. Unmentioned people/decisions fallback
+6. Meeting-to-meeting data isolation
+7. Summary & insights preservation
 
 ---
 

@@ -28,8 +28,8 @@ class Settings:
     # Transcription Model - whisper-large-v3-turbo
     GROQ_TRANSCRIPTION_MODEL: str = os.getenv("GROQ_TRANSCRIPTION_MODEL", "whisper-large-v3-turbo").strip()
     
-    # Summarisation Model - llama-3.3-70b-versatile
-    GROQ_SUMMARY_MODEL: str = os.getenv("GROQ_SUMMARY_MODEL", "llama-3.3-70b-versatile").strip()
+    # Summarisation Model - qwen/qwen3.8-27b
+    GROQ_SUMMARY_MODEL: str = os.getenv("GROQ_SUMMARY_MODEL", "qwen/qwen3.8-27b").strip()
     
     # Upload limits (Groq limits audio files to 25 MB)
     MAX_FILE_SIZE_MB: int = int(os.getenv("MAX_FILE_SIZE_MB", "25"))
@@ -54,5 +54,16 @@ class Settings:
     
     # Database
     DATABASE_PATH: str = str(DATA_DIR / "vartalaap.db")
+
+    # RAG & Meeting Chatbot Configuration
+    RAG_TOP_K: int = int(os.getenv("RAG_TOP_K", "5"))
+    RAG_SIMILARITY_THRESHOLD: float = float(os.getenv("RAG_SIMILARITY_THRESHOLD", "0.05"))
+    RAG_CHAT_MODEL: str = os.getenv("RAG_CHAT_MODEL", os.getenv("GROQ_SUMMARY_MODEL", "qwen/qwen3.8-27b")).strip()
+    
+    # Embedding Configuration (supports local semantic vectorizer or OpenAI-compatible embedding API)
+    EMBEDDING_PROVIDER: str = os.getenv("EMBEDDING_PROVIDER", "local").strip().lower() # 'local' or 'openai' or 'custom'
+    EMBEDDING_API_KEY: str = os.getenv("EMBEDDING_API_KEY", os.getenv("OPENAI_API_KEY", "")).strip()
+    EMBEDDING_BASE_URL: str = os.getenv("EMBEDDING_BASE_URL", "https://api.openai.com/v1").strip()
+    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small").strip()
 
 settings = Settings()

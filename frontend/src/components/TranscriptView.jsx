@@ -112,7 +112,7 @@ export default function TranscriptView({
             Transcript Segments
           </h3>
           <p style={{ fontSize: '0.78rem', color: 'var(--color-ink-muted)' }}>
-            {segments.length > 0 ? `${segments.length} Whisper segments • ` : ''}Click timestamps to jump audio
+            {segments.length > 0 ? `${segments.length} transcript segments • ` : ''}Click timestamps to jump audio
           </p>
         </div>
 

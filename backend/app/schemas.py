@@ -109,3 +109,32 @@ class HealthStatus(BaseModel):
 class SummarizeRequest(BaseModel):
     custom_instructions: Optional[str] = None
     model: Optional[str] = None
+
+# --- RAG Meeting Chatbot Schemas ---
+
+class ChatSourceChunk(BaseModel):
+    chunk_index: int = Field(..., description="Index of the chunk in the meeting")
+    start_time: float = Field(..., description="Earliest start timestamp in seconds")
+    end_time: float = Field(..., description="Latest end timestamp in seconds")
+    speaker_names: List[str] = Field(default_factory=list, description="Speakers present in this chunk")
+    segment_ids: List[int] = Field(default_factory=list, description="Underlying transcript segment IDs")
+    text: str = Field(..., description="Full text snippet of this chunk")
+    similarity: float = Field(0.0, description="Cosine similarity score against user query")
+
+class ChatQueryRequest(BaseModel):
+    question: str = Field(..., min_length=1, description="Question asked about this specific meeting transcript")
+    top_k: Optional[int] = Field(None, ge=1, le=20, description="Override number of chunks to retrieve")
+
+class ChatQueryResponse(BaseModel):
+    answer: str = Field(..., description="Answer grounded strictly in the meeting transcript")
+    sources: List[ChatSourceChunk] = Field(default_factory=list, description="Retrieved transcript sources supporting the answer")
+    model_used: Optional[str] = Field(None, description="LLM model used for synthesis")
+    is_fallback: bool = Field(False, description="True if answer is the strict fallback notice")
+    recording_id: str = Field(..., description="Recording ID this answer belongs to")
+
+class ChatIndexStatus(BaseModel):
+    recording_id: str
+    is_indexed: bool
+    chunk_count: int
+    last_updated: Optional[str] = None
+

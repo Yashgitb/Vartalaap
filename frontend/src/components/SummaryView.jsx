@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Target, CheckSquare, Users, FileText, RefreshCw, Play, Clock, User, AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Sparkles, Target, CheckSquare, Users, FileText, RefreshCw, Play, Clock, User, AlertCircle, ArrowRight, CheckCircle2, MessageSquare } from 'lucide-react';
 import { formatSeconds } from '../utils/formatters';
 
 export default function SummaryView({
@@ -9,7 +9,8 @@ export default function SummaryView({
   summaryError,
   segments = [],
   onSeekSegment,
-  onRegenerateSummary
+  onRegenerateSummary,
+  onOpenChat
 }) {
   const [activeTab, setActiveTab] = useState('overview'); // overview, people, goals, tasks, decisions
   const [customPrompt, setCustomPrompt] = useState('');
@@ -137,7 +138,7 @@ export default function SummaryView({
           {loading ? (
             <>
               <RefreshCw size={16} className="animate-spin" />
-              <span>Generating Structured Summary with Groq...</span>
+              <span>Generating Structured Summary...</span>
             </>
           ) : (
             <>
@@ -170,10 +171,21 @@ export default function SummaryView({
   return (
     <div className="retro-card" style={{ padding: '1.25rem', backgroundColor: 'var(--bg-card)' }}>
       {/* Title Header */}
-      <div style={{ borderBottom: '1.5px solid var(--color-border-light)', paddingBottom: '0.85rem', marginBottom: '1rem' }}>
-        <h2 className="font-serif" style={{ fontSize: '1.45rem', color: 'var(--color-ink)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1.5px solid var(--color-border-light)', paddingBottom: '0.85rem', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <h2 className="font-serif" style={{ fontSize: '1.45rem', color: 'var(--color-ink)', margin: 0 }}>
           {summary.title || "Meeting Summary"}
         </h2>
+        {onOpenChat && (
+          <button
+            type="button"
+            onClick={onOpenChat}
+            className="btn-burgundy btn-sm"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}
+          >
+            <MessageSquare size={13} />
+            <span>Chat with Meeting</span>
+          </button>
+        )}
       </div>
 
       {/* Tabs Navigation matching Reference Design */}
